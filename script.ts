@@ -46,12 +46,32 @@ async function checkESMSupport(repo: string): Promise<boolean> {
 async function main() {
   const repos = await getAllRepoNames();
   console.log(`Checking ${repos.length} repos for ESM support`);
+  const totalRepos = repos.length;
 
+  const repoMap: Record<string, boolean> = {};
   for (const repo of repos) {
     const supportsESM = await checkESMSupport(repo);
-    console.log(
-      `sindresorhus/${repo} - ${supportsESM ? "✅ ESM" : "🚫 No ESM Support"}`,
-    );
+    repoMap[repo] = supportsESM;
+  }
+
+  const reposWithEsmSupportPercentage = Math.floor(
+    (Object.values(repoMap).filter((support) => support).length / totalRepos) *
+      100,
+  );
+
+  const reposWithNonEsmSupportPercentage = Math.floor(
+    (Object.values(repoMap).filter((support) => !support).length / totalRepos) *
+      100,
+  );
+
+  console.log(`✅ Percentage ESM Repos ${reposWithEsmSupportPercentage}%`);
+  console.log(
+    `🚫 Percentage Non-ESM Repos ${reposWithNonEsmSupportPercentage}%`,
+  );
+  console.log("");
+
+  for (const [repo, supportsESM] of Object.entries(repoMap)) {
+    console.log(`${supportsESM ? "✅" : "🚫"} sindresorhus/${repo}`);
   }
 }
 
