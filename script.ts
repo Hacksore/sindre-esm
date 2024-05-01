@@ -21,10 +21,8 @@ async function getAllRepoNames() {
   });
 
   return repos
-    .filter((repo) => !repo.archived)
-    .filter((repo) => !repo.fork)
-    .filter((repo) => supportedLang(repo.language))
-    .map((repo) => repo.name);
+    .filter(repo => !repo.archived && !repo.fork && supportedLang(repo.language))
+    .map(repo => repo.name);
 }
 
 async function checkESMSupport(repo: string): Promise<boolean> {
